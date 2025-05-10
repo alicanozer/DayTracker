@@ -34,9 +34,8 @@ struct ContentView: View {
     static let accentBlue = Color(red: 80/255, green: 130/255, blue: 255/255)
     static let accentGreen = Color(red: 60/255, green: 180/255, blue: 120/255)
     static let accentRed = Color(red: 220/255, green: 80/255, blue: 80/255)
-    static let serifFontName = "Georgia"
-    static let serifFontItalicName = "Georgia-Italic"
-    static let serifFont = Font.custom(serifFontName, size: 15)
+    static let monoFontName = "Menlo"
+    static let monoFont = Font.custom(monoFontName, size: 15)
     
     var body: some View {
         VStack(spacing: 0) {
@@ -55,9 +54,9 @@ struct ContentView: View {
             if dateRangeManager.dateRanges.isEmpty {
                 VStack {
                     Spacer()
-                    Text("No date ranges yet")
+                    Text("No dates yet")
                         .foregroundColor(Self.textSecondary)
-                        .font(.custom(Self.serifFontName, size: 17).weight(.bold))
+                        .font(.custom(Self.monoFontName, size: 17).weight(.bold))
                     Spacer()
                 }
             } else {
@@ -85,20 +84,16 @@ struct ContentView: View {
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
-                        .font(.custom(Self.serifFontName, size: 15).weight(.semibold))
+                        .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
                         .foregroundColor(Self.textPrimary)
                     Text(range.description)
-                        .font(.custom(Self.serifFontItalicName, size: 15))
+                        .font(.custom(Self.monoFontName, size: 15))
                         .foregroundColor(Self.accentBlue)
                 }
                 Spacer(minLength: 8)
-                Text("\(range.numberOfDays) days")
-                    .font(.custom(Self.serifFontName, size: 15))
-                    .foregroundColor(Self.textSecondary)
-                Text(range.isInclusive ? "Inclusive" : "Exclusive")
-                    .font(.custom(Self.serifFontName, size: 15).weight(.semibold))
+                Text((range.isInclusive ? "Inclusive" : "Exclusive") + ":\(range.numberOfDays) days")
+                    .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
                     .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
                     .background(range.isInclusive ? Self.accentGreen.opacity(0.15) : Self.accentRed.opacity(0.15))
                     .foregroundColor(range.isInclusive ? Self.accentGreen : Self.accentRed)
                     .cornerRadius(8)
@@ -140,13 +135,13 @@ struct ContentView: View {
     private var summaryAndAddButtonSection: some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.serifFontName, size: 15)) } icon: { Text("Included").foregroundColor(Self.textSecondary).font(.custom(Self.serifFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Included").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
                     .labelStyle(VerticalLabelStyle())
                 Divider().frame(height: 24)
-                Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.serifFontName, size: 15)) } icon: { Text("Excluded").foregroundColor(Self.textSecondary).font(.custom(Self.serifFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Excluded").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
                     .labelStyle(VerticalLabelStyle())
                 Divider().frame(height: 24)
-                Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.serifFontName, size: 15)) } icon: { Text("Final").foregroundColor(Self.textSecondary).font(.custom(Self.serifFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Final").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
                     .labelStyle(VerticalLabelStyle())
             }
             .frame(maxWidth: .infinity)
@@ -161,7 +156,7 @@ struct ContentView: View {
                     Text("Add New Range")
                         .fontWeight(.medium)
                 }
-                .font(.custom(Self.serifFontName, size: 15).weight(.semibold))
+                .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
                 .frame(maxWidth: .infinity)
                 .padding(10)
                 .background(Self.accentBlue)
@@ -183,7 +178,7 @@ struct ContentView: View {
     private var addDateSheet: some View {
         VStack(spacing: 16) {
             Text("Add New Dates")
-                .font(.custom(Self.serifFontName, size: 22).weight(.bold))
+                .font(.custom(Self.monoFontName, size: 22).weight(.bold))
                 .foregroundColor(Self.textPrimary)
                 .padding(.top, 8)
             VStack(spacing: 8) {
@@ -193,36 +188,36 @@ struct ContentView: View {
                     .background(Self.cardColor)
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
-                    .font(.custom(Self.serifFontName, size: 15))
+                    .font(.custom(Self.monoFontName, size: 15))
                 DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                     .datePickerStyle(.compact)
                     .padding(8)
                     .background(Self.cardColor)
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
-                    .font(.custom(Self.serifFontName, size: 15))
+                    .font(.custom(Self.monoFontName, size: 15))
                 Toggle("Include Dates", isOn: $isInclusive)
                     .toggleStyle(SwitchToggleStyle(tint: Self.accentGreen))
                     .padding(.horizontal, 8)
                     .foregroundColor(Self.textPrimary)
-                    .font(.custom(Self.serifFontName, size: 15))
+                    .font(.custom(Self.monoFontName, size: 15))
                 TextField("Description", text: $description)
                     .padding(8)
                     .background(Self.cardColor)
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
-                    .font(.custom(Self.serifFontName, size: 15))
+                    .font(.custom(Self.monoFontName, size: 15))
                 if endDate <= startDate {
                     Text("End date must be after start date.")
                         .foregroundColor(Self.accentRed)
-                        .font(.custom(Self.serifFontName, size: 15))
+                        .font(.custom(Self.monoFontName, size: 15))
                 }
                 Button(action: {
                     addDateRange()
                     showAddSheet = false
                 }) {
                     Text("Add")
-                        .font(.custom(Self.serifFontName, size: 15).weight(.semibold))
+                        .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(10)
                         .background(Self.accentGreen)
