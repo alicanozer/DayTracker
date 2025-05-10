@@ -26,6 +26,10 @@ struct ContentView: View {
     }()
     
     var body: some View {
+        let backgroundColor = Color(red: 24/255, green: 26/255, blue: 32/255) // #181A20
+        let cardColor = Color(red: 35/255, green: 39/255, blue: 47/255) // #23272F
+        let textPrimary = Color(red: 224/255, green: 224/255, blue: 224/255) // #E0E0E0
+        let textSecondary = Color(red: 170/255, green: 170/255, blue: 180/255) // #AAAAAA
         VStack(spacing: 0) {
             // 1. List view at the top
             ZStack {
@@ -33,7 +37,7 @@ struct ContentView: View {
                     VStack {
                         Spacer()
                         Text("No date ranges yet")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(textSecondary)
                             .font(.headline)
                         Spacer()
                     }
@@ -42,27 +46,27 @@ struct ContentView: View {
                         ForEach(dateRangeManager.dateRanges) { range in
                             ZStack {
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color(.secondarySystemBackground).opacity(0.85))
-                                    .shadow(color: Color.black.opacity(0.18), radius: 4, x: 0, y: 2)
+                                    .fill(cardColor)
+                                    .shadow(color: Color.black.opacity(0.10), radius: 3, x: 0, y: 1)
                                 HStack(spacing: 10) {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
                                             .font(.subheadline)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(textPrimary)
                                         Text(range.description)
                                             .font(.caption)
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(Color.blue.opacity(0.7))
                                     }
                                     Spacer(minLength: 8)
                                     Text("\(range.numberOfDays) days")
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(textSecondary)
                                     Text(range.isInclusive ? "Inclusive" : "Exclusive")
                                         .font(.caption2)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 2)
-                                        .background(range.isInclusive ? Color.green.opacity(0.25) : Color.red.opacity(0.25))
-                                        .foregroundColor(range.isInclusive ? .green : .red)
+                                        .background(range.isInclusive ? Color.green.opacity(0.18) : Color.red.opacity(0.18))
+                                        .foregroundColor(range.isInclusive ? Color.green.opacity(0.8) : Color.red.opacity(0.8))
                                         .cornerRadius(6)
                                 }
                                 .padding(10)
@@ -100,10 +104,10 @@ struct ContentView: View {
                     }
                     .listStyle(PlainListStyle())
                     .frame(maxHeight: .infinity)
-                    .background(Color(.black).opacity(0.85))
+                    .background(backgroundColor)
                 }
             }
-            .background(Color(.black).opacity(0.95))
+            .background(backgroundColor)
             .cornerRadius(18)
             .padding(.top, 8)
             .padding(.horizontal, 4)
@@ -112,18 +116,18 @@ struct ContentView: View {
             VStack(spacing: 10) {
                 // Total days section moved here, right above the form
                 HStack(spacing: 8) {
-                    Label { Text("\(dateRangeManager.totalIncludedDays)").bold() } icon: { Text("Included") }
+                    Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(textPrimary) } icon: { Text("Included").foregroundColor(textSecondary) }
                         .labelStyle(VerticalLabelStyle())
                     Divider().frame(height: 24)
-                    Label { Text("\(dateRangeManager.totalExcludedDays)").bold() } icon: { Text("Excluded") }
+                    Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(textPrimary) } icon: { Text("Excluded").foregroundColor(textSecondary) }
                         .labelStyle(VerticalLabelStyle())
                     Divider().frame(height: 24)
-                    Label { Text("\(dateRangeManager.totalDays)").bold() } icon: { Text("Final") }
+                    Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(textPrimary) } icon: { Text("Final").foregroundColor(textSecondary) }
                         .labelStyle(VerticalLabelStyle())
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
-                .background(Color(.secondarySystemBackground).opacity(0.7))
+                .background(cardColor.opacity(0.85))
                 .cornerRadius(10)
                 .padding(.horizontal, 2)
                 
@@ -131,23 +135,27 @@ struct ContentView: View {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .padding(6)
-                        .background(Color(.secondarySystemBackground).opacity(0.8))
+                        .background(cardColor.opacity(0.9))
                         .cornerRadius(8)
+                        .foregroundColor(textPrimary)
                     DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .padding(6)
-                        .background(Color(.secondarySystemBackground).opacity(0.8))
+                        .background(cardColor.opacity(0.9))
                         .cornerRadius(8)
+                        .foregroundColor(textPrimary)
                     Toggle("Include Dates", isOn: $isInclusive)
                         .toggleStyle(SwitchToggleStyle(tint: .green))
                         .padding(.horizontal, 6)
+                        .foregroundColor(textPrimary)
                     TextField("Description", text: $description)
                         .padding(6)
-                        .background(Color(.secondarySystemBackground).opacity(0.8))
+                        .background(cardColor.opacity(0.9))
                         .cornerRadius(8)
+                        .foregroundColor(textPrimary)
                     if endDate <= startDate {
                         Text("End date must be after start date.")
-                            .foregroundColor(.red)
+                            .foregroundColor(.red.opacity(0.8))
                             .font(.caption2)
                     }
                     Button(action: addDateRange) {
@@ -155,10 +163,10 @@ struct ContentView: View {
                             .font(.subheadline)
                             .frame(maxWidth: .infinity)
                             .padding(8)
-                            .background(Color.green)
-                            .foregroundColor(.white)
+                            .background(Color.green.opacity(0.85))
+                            .foregroundColor(backgroundColor)
                             .cornerRadius(10)
-                            .shadow(color: Color.green.opacity(0.18), radius: 2, x: 0, y: 1)
+                            .shadow(color: Color.green.opacity(0.10), radius: 2, x: 0, y: 1)
                     }
                     .buttonStyle(.plain)
                     .disabled(endDate <= startDate)
@@ -167,12 +175,12 @@ struct ContentView: View {
             }
             .padding(.top, 6)
             .padding(.bottom, 6)
-            .background(Color(.black).opacity(0.92))
+            .background(cardColor.opacity(0.95))
             .cornerRadius(18)
             .shadow(radius: 4)
             .padding(.horizontal, 4)
         }
-        .background(Color(.black).ignoresSafeArea())
+        .background(backgroundColor.ignoresSafeArea())
         .sheet(item: $editingRange) { range in
             NavigationView {
                 Form {
