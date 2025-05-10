@@ -90,9 +90,13 @@ struct ContentView: View {
                         .font(.custom(Self.monoFontName, size: 15))
                         .foregroundColor(Self.accentBlue)
                 }
-                Text((range.isInclusive ? "Inclusive" : "Exclusive") + ": \(range.numberOfDays) days")
+                Spacer(minLength: 8)
+                Text((range.isInclusive ? "Inclusive" : "Exclusive") + ":\(range.numberOfDays) days")
                     .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 10)
+                    .background(range.isInclusive ? Self.accentGreen.opacity(0.15) : Self.accentRed.opacity(0.15))
+                    .foregroundColor(range.isInclusive ? Self.accentGreen : Self.accentRed)
+                    .cornerRadius(8)
             }
             .padding(14)
             .opacity(range.ignore ? 0.4 : 1.0)
