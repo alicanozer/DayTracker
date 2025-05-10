@@ -26,241 +26,216 @@ struct ContentView: View {
         return formatter
     }()
     
+    // Color and font constants
+    static let appBackground = Color(red: 235/255, green: 240/255, blue: 250/255)
+    static let cardColor = Color.white
+    static let textPrimary = Color(red: 30/255, green: 40/255, blue: 60/255)
+    static let textSecondary = Color(red: 120/255, green: 130/255, blue: 150/255)
+    static let accentBlue = Color(red: 80/255, green: 130/255, blue: 255/255)
+    static let accentGreen = Color(red: 60/255, green: 180/255, blue: 120/255)
+    static let accentRed = Color(red: 220/255, green: 80/255, blue: 80/255)
+    static let serifFont = Font.custom("Georgia", size: 17)
+    
     var body: some View {
-        let appBackground = Color(red: 235/255, green: 240/255, blue: 250/255) // soft blue-gray
-        let cardColor = Color.white
-        let textPrimary = Color(red: 30/255, green: 40/255, blue: 60/255) // dark blue
-        let textSecondary = Color(red: 120/255, green: 130/255, blue: 150/255) // soft gray-blue
-        let accentBlue = Color(red: 80/255, green: 130/255, blue: 255/255)
-        let accentGreen = Color(red: 60/255, green: 180/255, blue: 120/255)
-        let accentRed = Color(red: 220/255, green: 80/255, blue: 80/255)
-        let serifFont = Font.custom("Georgia", size: 17)
         VStack(spacing: 0) {
-            // 1. List view at the top
-            ZStack {
-                if dateRangeManager.dateRanges.isEmpty {
-                    VStack {
-                        Spacer()
-                        Text("No date ranges yet")
-                            .foregroundColor(textSecondary)
-                            .font(serifFont.weight(.bold))
-                        Spacer()
-                    }
-                } else {
-                    List {
-                        ForEach(dateRangeManager.dateRanges) { range in
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(cardColor)
-                                    .shadow(color: accentBlue.opacity(0.07), radius: 4, x: 0, y: 2)
-                                HStack(spacing: 10) {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
-                                            .font(serifFont.weight(.semibold))
-                                            .foregroundColor(textPrimary)
-                                        Text(range.description)
-                                            .font(serifFont.italic().weight(.regular).size(15))
-                                            .foregroundColor(accentBlue)
-                                    }
-                                    Spacer(minLength: 8)
-                                    Text("\(range.numberOfDays) days")
-                                        .font(serifFont.size(15))
-                                        .foregroundColor(textSecondary)
-                                    Text(range.isInclusive ? "Inclusive" : "Exclusive")
-                                        .font(serifFont.size(14).weight(.semibold))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 4)
-                                        .background(range.isInclusive ? accentGreen.opacity(0.15) : accentRed.opacity(0.15))
-                                        .foregroundColor(range.isInclusive ? accentGreen : accentRed)
-                                        .cornerRadius(8)
-                                }
-                                .padding(14)
-                                .opacity(range.ignore ? 0.4 : 1.0)
-                            }
-                            .listRowBackground(Color.clear)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    editingRange = range
-                                    editStartDate = range.startDate
-                                    editEndDate = range.endDate
-                                    editIsInclusive = range.isInclusive
-                                    editDescription = range.description
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
-                                }
-                                .tint(accentBlue)
-                                
-                                Button(role: .destructive) {
-                                    if let index = dateRangeManager.dateRanges.firstIndex(where: { $0.id == range.id }) {
-                                        deleteDateRange(at: IndexSet(integer: index))
-                                    }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                                .tint(accentRed)
-                                
-                                Button {
-                                    dateRangeManager.toggleIgnore(id: range.id)
-                                } label: {
-                                    Label(range.ignore ? "Unignore" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
-                                }
-                                .tint(.gray)
-                            }
-                        }
-                    }
-                    .listStyle(PlainListStyle())
-                    .frame(maxHeight: .infinity)
-                    .background(appBackground)
-                }
-            }
-            .background(appBackground)
-            .cornerRadius(18)
-            .padding(.top, 8)
-            .padding(.horizontal, 4)
-            
-            // 2. Total days and add button
-            VStack(spacing: 10) {
-                HStack(spacing: 8) {
-                    Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(textPrimary).font(serifFont) } icon: { Text("Included").foregroundColor(textSecondary).font(serifFont.size(14)) }
-                        .labelStyle(VerticalLabelStyle())
-                    Divider().frame(height: 24)
-                    Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(textPrimary).font(serifFont) } icon: { Text("Excluded").foregroundColor(textSecondary).font(serifFont.size(14)) }
-                        .labelStyle(VerticalLabelStyle())
-                    Divider().frame(height: 24)
-                    Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(textPrimary).font(serifFont) } icon: { Text("Final").foregroundColor(textSecondary).font(serifFont.size(14)) }
-                        .labelStyle(VerticalLabelStyle())
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
-                .background(cardColor.opacity(0.95))
-                .cornerRadius(10)
-                .padding(.horizontal, 2)
-                
-                Button(action: { showAddSheet = true }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add New Range")
-                            .fontWeight(.medium)
-                    }
-                    .font(serifFont.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(10)
-                    .background(accentBlue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .shadow(color: accentBlue.opacity(0.10), radius: 2, x: 0, y: 1)
-                }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 2)
-            }
-            .padding(.top, 6)
-            .padding(.bottom, 6)
-            .background(cardColor.opacity(0.98))
-            .cornerRadius(18)
-            .shadow(radius: 4)
-            .padding(.horizontal, 4)
+            mainListSection
+            summaryAndAddButtonSection
         }
-        .background(appBackground.ignoresSafeArea())
+        .background(Self.appBackground.ignoresSafeArea())
         .sheet(isPresented: $showAddSheet) {
-            VStack(spacing: 16) {
-                Text("Add New Date Range")
-                    .font(serifFont.weight(.bold).size(22))
-                    .foregroundColor(textPrimary)
-                    .padding(.top, 8)
-                VStack(spacing: 8) {
-                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                        .padding(8)
-                        .background(cardColor)
-                        .cornerRadius(8)
-                        .foregroundColor(textPrimary)
-                        .font(serifFont)
-                    DatePicker("End Date", selection: $endDate, displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                        .padding(8)
-                        .background(cardColor)
-                        .cornerRadius(8)
-                        .foregroundColor(textPrimary)
-                        .font(serifFont)
-                    Toggle("Include Dates", isOn: $isInclusive)
-                        .toggleStyle(SwitchToggleStyle(tint: accentGreen))
-                        .padding(.horizontal, 8)
-                        .foregroundColor(textPrimary)
-                        .font(serifFont)
-                    TextField("Description", text: $description)
-                        .padding(8)
-                        .background(cardColor)
-                        .cornerRadius(8)
-                        .foregroundColor(textPrimary)
-                        .font(serifFont)
-                    if endDate <= startDate {
-                        Text("End date must be after start date.")
-                            .foregroundColor(accentRed)
-                            .font(serifFont.size(14))
-                    }
-                    Button(action: {
-                        addDateRange()
-                        showAddSheet = false
-                    }) {
-                        Text("Add")
-                            .font(serifFont.weight(.semibold))
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            .background(accentGreen)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .shadow(color: accentGreen.opacity(0.10), radius: 2, x: 0, y: 1)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(endDate <= startDate)
-                }
-                .padding(.horizontal, 2)
-                Spacer()
-            }
-            .padding()
-            .background(appBackground.ignoresSafeArea())
-        }
-        .sheet(item: $editingRange) { range in
-            NavigationView {
-                Form {
-                    DatePicker("Start Date", selection: $editStartDate, displayedComponents: .date)
-                    DatePicker("End Date", selection: $editEndDate, displayedComponents: .date)
-                    Toggle("Include Dates", isOn: $editIsInclusive)
-                    TextField("Description", text: $editDescription)
-                    Toggle("Ignore this range", isOn: Binding(
-                        get: { range.ignore },
-                        set: { newValue in dateRangeManager.toggleIgnore(id: range.id) }
-                    ))
-                    if editEndDate <= editStartDate {
-                        Text("End date must be after start date.")
-                            .foregroundColor(.red)
-                            .font(.caption2)
-                    }
-                }
-                .navigationTitle("Edit Date Range")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { editingRange = nil }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") {
-                            if let id = range.id as UUID? {
-                                dateRangeManager.updateDateRange(
-                                    id: id,
-                                    startDate: editStartDate,
-                                    endDate: editEndDate,
-                                    isInclusive: editIsInclusive,
-                                    description: editDescription
-                                )
-                            }
-                            editingRange = nil
-                        }
-                        .disabled(editEndDate <= editStartDate)
-                    }
-                }
-            }
+            addDateSheet
         }
         .navigationTitle("Date Tracker")
+    }
+    
+    private var mainListSection: some View {
+        ZStack {
+            if dateRangeManager.dateRanges.isEmpty {
+                VStack {
+                    Spacer()
+                    Text("No date ranges yet")
+                        .foregroundColor(Self.textSecondary)
+                        .font(Self.serifFont.weight(.bold))
+                    Spacer()
+                }
+            } else {
+                List {
+                    ForEach(dateRangeManager.dateRanges) { range in
+                        dateRangeRow(range)
+                    }
+                }
+                .listStyle(PlainListStyle())
+                .frame(maxHeight: .infinity)
+                .background(Self.appBackground)
+            }
+        }
+        .background(Self.appBackground)
+        .cornerRadius(18)
+        .padding(.top, 8)
+        .padding(.horizontal, 4)
+    }
+    
+    private func dateRangeRow(_ range: DateRange) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Self.cardColor)
+                .shadow(color: Self.accentBlue.opacity(0.07), radius: 4, x: 0, y: 2)
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
+                        .font(Self.serifFont.weight(.semibold))
+                        .foregroundColor(Self.textPrimary)
+                    Text(range.description)
+                        .font(Self.serifFont.italic().weight(.regular).size(15))
+                        .foregroundColor(Self.accentBlue)
+                }
+                Spacer(minLength: 8)
+                Text("\(range.numberOfDays) days")
+                    .font(Self.serifFont.size(15))
+                    .foregroundColor(Self.textSecondary)
+                Text(range.isInclusive ? "Inclusive" : "Exclusive")
+                    .font(Self.serifFont.size(14).weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(range.isInclusive ? Self.accentGreen.opacity(0.15) : Self.accentRed.opacity(0.15))
+                    .foregroundColor(range.isInclusive ? Self.accentGreen : Self.accentRed)
+                    .cornerRadius(8)
+            }
+            .padding(14)
+            .opacity(range.ignore ? 0.4 : 1.0)
+        }
+        .listRowBackground(Color.clear)
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button {
+                editingRange = range
+                editStartDate = range.startDate
+                editEndDate = range.endDate
+                editIsInclusive = range.isInclusive
+                editDescription = range.description
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            .tint(Self.accentBlue)
+            
+            Button(role: .destructive) {
+                if let index = dateRangeManager.dateRanges.firstIndex(where: { $0.id == range.id }) {
+                    deleteDateRange(at: IndexSet(integer: index))
+                }
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+            .tint(Self.accentRed)
+            
+            Button {
+                dateRangeManager.toggleIgnore(id: range.id)
+            } label: {
+                Label(range.ignore ? "Unignore" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
+            }
+            .tint(.gray)
+        }
+    }
+    
+    private var summaryAndAddButtonSection: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(Self.textPrimary).font(Self.serifFont) } icon: { Text("Included").foregroundColor(Self.textSecondary).font(Self.serifFont.size(14)) }
+                    .labelStyle(VerticalLabelStyle())
+                Divider().frame(height: 24)
+                Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(Self.textPrimary).font(Self.serifFont) } icon: { Text("Excluded").foregroundColor(Self.textSecondary).font(Self.serifFont.size(14)) }
+                    .labelStyle(VerticalLabelStyle())
+                Divider().frame(height: 24)
+                Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(Self.textPrimary).font(Self.serifFont) } icon: { Text("Final").foregroundColor(Self.textSecondary).font(Self.serifFont.size(14)) }
+                    .labelStyle(VerticalLabelStyle())
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(Self.cardColor.opacity(0.95))
+            .cornerRadius(10)
+            .padding(.horizontal, 2)
+            
+            Button(action: { showAddSheet = true }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add New Range")
+                        .fontWeight(.medium)
+                }
+                .font(Self.serifFont.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(10)
+                .background(Self.accentBlue)
+                .foregroundColor(.white)
+                .cornerRadius(12)
+                .shadow(color: Self.accentBlue.opacity(0.10), radius: 2, x: 0, y: 1)
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 2)
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 6)
+        .background(Self.cardColor.opacity(0.98))
+        .cornerRadius(18)
+        .shadow(radius: 4)
+        .padding(.horizontal, 4)
+    }
+    
+    private var addDateSheet: some View {
+        VStack(spacing: 16) {
+            Text("Add New Dates")
+                .font(Self.serifFont.weight(.bold).size(22))
+                .foregroundColor(Self.textPrimary)
+                .padding(.top, 8)
+            VStack(spacing: 8) {
+                DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                    .datePickerStyle(.compact)
+                    .padding(8)
+                    .background(Self.cardColor)
+                    .cornerRadius(8)
+                    .foregroundColor(Self.textPrimary)
+                    .font(Self.serifFont)
+                DatePicker("End Date", selection: $endDate, displayedComponents: .date)
+                    .datePickerStyle(.compact)
+                    .padding(8)
+                    .background(Self.cardColor)
+                    .cornerRadius(8)
+                    .foregroundColor(Self.textPrimary)
+                    .font(Self.serifFont)
+                Toggle("Include Dates", isOn: $isInclusive)
+                    .toggleStyle(SwitchToggleStyle(tint: Self.accentGreen))
+                    .padding(.horizontal, 8)
+                    .foregroundColor(Self.textPrimary)
+                    .font(Self.serifFont)
+                TextField("Description", text: $description)
+                    .padding(8)
+                    .background(Self.cardColor)
+                    .cornerRadius(8)
+                    .foregroundColor(Self.textPrimary)
+                    .font(Self.serifFont)
+                if endDate <= startDate {
+                    Text("End date must be after start date.")
+                        .foregroundColor(Self.accentRed)
+                        .font(Self.serifFont.size(14))
+                }
+                Button(action: {
+                    addDateRange()
+                    showAddSheet = false
+                }) {
+                    Text("Add")
+                        .font(Self.serifFont.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(10)
+                        .background(Self.accentGreen)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(color: Self.accentGreen.opacity(0.10), radius: 2, x: 0, y: 1)
+                }
+                .buttonStyle(.plain)
+                .disabled(endDate <= startDate)
+            }
+            .padding(.horizontal, 2)
+            Spacer()
+        }
+        .padding()
+        .background(Self.appBackground.ignoresSafeArea())
     }
     
     private func addDateRange() {
