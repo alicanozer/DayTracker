@@ -113,7 +113,7 @@ struct ContentView: View {
             .padding(.top, 8)
             .padding(.horizontal, 4)
             
-            // 2. Toplam günler ve ekle butonu
+            // 2. Total days and add button
             VStack(spacing: 10) {
                 HStack(spacing: 8) {
                     Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(textPrimary) } icon: { Text("Included").foregroundColor(textSecondary) }
@@ -134,7 +134,7 @@ struct ContentView: View {
                 Button(action: { showAddSheet = true }) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                        Text("Yeni Kayıt Ekle")
+                        Text("Add New Range")
                             .fontWeight(.medium)
                     }
                     .font(.headline)
@@ -158,7 +158,7 @@ struct ContentView: View {
         .background(backgroundColor.ignoresSafeArea())
         .sheet(isPresented: $showAddSheet) {
             VStack(spacing: 16) {
-                Text("Yeni Tarih Aralığı Ekle")
+                Text("Add New Date Range")
                     .font(.headline)
                     .foregroundColor(textPrimary)
                     .padding(.top, 8)
@@ -193,7 +193,7 @@ struct ContentView: View {
                         addDateRange()
                         showAddSheet = false
                     }) {
-                        Text("Ekle")
+                        Text("Add")
                             .font(.subheadline)
                             .frame(maxWidth: .infinity)
                             .padding(8)
