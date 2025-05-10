@@ -157,33 +157,36 @@ struct ContentView: View {
         }
         .background(backgroundColor.ignoresSafeArea())
         .sheet(isPresented: $showAddSheet) {
+            let sheetBackground = Color(.systemGray6)
+            let sheetField = Color.white
+            let sheetText = Color.black
             VStack(spacing: 16) {
                 Text("Add New Date Range")
                     .font(.headline)
-                    .foregroundColor(textPrimary)
+                    .foregroundColor(sheetText)
                     .padding(.top, 8)
                 VStack(spacing: 8) {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .padding(6)
-                        .background(cardColor.opacity(0.9))
+                        .background(sheetField)
                         .cornerRadius(8)
-                        .foregroundColor(textPrimary)
+                        .foregroundColor(sheetText)
                     DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .padding(6)
-                        .background(cardColor.opacity(0.9))
+                        .background(sheetField)
                         .cornerRadius(8)
-                        .foregroundColor(textPrimary)
+                        .foregroundColor(sheetText)
                     Toggle("Include Dates", isOn: $isInclusive)
                         .toggleStyle(SwitchToggleStyle(tint: .green))
                         .padding(.horizontal, 6)
-                        .foregroundColor(textPrimary)
+                        .foregroundColor(sheetText)
                     TextField("Description", text: $description)
                         .padding(6)
-                        .background(cardColor.opacity(0.9))
+                        .background(sheetField)
                         .cornerRadius(8)
-                        .foregroundColor(textPrimary)
+                        .foregroundColor(sheetText)
                     if endDate <= startDate {
                         Text("End date must be after start date.")
                             .foregroundColor(.red.opacity(0.8))
@@ -198,7 +201,7 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity)
                             .padding(8)
                             .background(Color.green.opacity(0.85))
-                            .foregroundColor(backgroundColor)
+                            .foregroundColor(.white)
                             .cornerRadius(10)
                             .shadow(color: Color.green.opacity(0.10), radius: 2, x: 0, y: 1)
                     }
@@ -209,7 +212,7 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
-            .background(backgroundColor.ignoresSafeArea())
+            .background(sheetBackground.ignoresSafeArea())
         }
         .sheet(item: $editingRange) { range in
             NavigationView {
