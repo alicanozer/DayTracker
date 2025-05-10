@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var editEndDate = Date()
     @State private var editIsInclusive = true
     @State private var editDescription = ""
+    @State private var showAddSheet = false
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -112,9 +113,8 @@ struct ContentView: View {
             .padding(.top, 8)
             .padding(.horizontal, 4)
             
-            // 2. Add new date range form fixed at the bottom
+            // 2. Toplam günler ve ekle butonu
             VStack(spacing: 10) {
-                // Total days section moved here, right above the form
                 HStack(spacing: 8) {
                     Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(textPrimary) } icon: { Text("Included").foregroundColor(textSecondary) }
                         .labelStyle(VerticalLabelStyle())
@@ -131,6 +131,37 @@ struct ContentView: View {
                 .cornerRadius(10)
                 .padding(.horizontal, 2)
                 
+                Button(action: { showAddSheet = true }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Yeni Kayıt Ekle")
+                            .fontWeight(.medium)
+                    }
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(10)
+                    .background(Color.blue.opacity(0.85))
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .shadow(color: Color.blue.opacity(0.10), radius: 2, x: 0, y: 1)
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 2)
+            }
+            .padding(.top, 6)
+            .padding(.bottom, 6)
+            .background(cardColor.opacity(0.95))
+            .cornerRadius(18)
+            .shadow(radius: 4)
+            .padding(.horizontal, 4)
+        }
+        .background(backgroundColor.ignoresSafeArea())
+        .sheet(isPresented: $showAddSheet) {
+            VStack(spacing: 16) {
+                Text("Yeni Tarih Aralığı Ekle")
+                    .font(.headline)
+                    .foregroundColor(textPrimary)
+                    .padding(.top, 8)
                 VStack(spacing: 8) {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
@@ -158,8 +189,11 @@ struct ContentView: View {
                             .foregroundColor(.red.opacity(0.8))
                             .font(.caption2)
                     }
-                    Button(action: addDateRange) {
-                        Text("Add")
+                    Button(action: {
+                        addDateRange()
+                        showAddSheet = false
+                    }) {
+                        Text("Ekle")
                             .font(.subheadline)
                             .frame(maxWidth: .infinity)
                             .padding(8)
@@ -172,15 +206,11 @@ struct ContentView: View {
                     .disabled(endDate <= startDate)
                 }
                 .padding(.horizontal, 2)
+                Spacer()
             }
-            .padding(.top, 6)
-            .padding(.bottom, 6)
-            .background(cardColor.opacity(0.95))
-            .cornerRadius(18)
-            .shadow(radius: 4)
-            .padding(.horizontal, 4)
+            .padding()
+            .background(backgroundColor.ignoresSafeArea())
         }
-        .background(backgroundColor.ignoresSafeArea())
         .sheet(item: $editingRange) { range in
             NavigationView {
                 Form {
