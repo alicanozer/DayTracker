@@ -40,24 +40,35 @@ struct ContentView: View {
                 } else {
                     List {
                         ForEach(dateRangeManager.dateRanges) { range in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
-                                    Text(range.description)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(Color(.systemBackground))
+                                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                                HStack(spacing: 16) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
+                                            .font(.headline)
+                                            .foregroundColor(.primary)
+                                        Text(range.description)
+                                            .font(.subheadline)
+                                            .foregroundColor(.blue)
+                                    }
+                                    Spacer()
+                                    Text("\(range.numberOfDays) days")
                                         .font(.subheadline)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.secondary)
+                                    Text(range.isInclusive ? "Inclusive" : "Exclusive")
+                                        .font(.caption)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(range.isInclusive ? Color.green.opacity(0.18) : Color.red.opacity(0.18))
+                                        .foregroundColor(range.isInclusive ? .green : .red)
+                                        .cornerRadius(8)
                                 }
-                                Spacer()
-                                Text("\(range.numberOfDays) days")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                Text(range.isInclusive ? "Inclusive" : "Exclusive")
-                                    .font(.caption)
-                                    .padding(4)
-                                    .background(range.isInclusive ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                                    .cornerRadius(4)
+                                .padding(16)
+                                .opacity(range.ignore ? 0.4 : 1.0)
                             }
-                            .opacity(range.ignore ? 0.4 : 1.0)
+                            .listRowBackground(Color.clear)
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
                                     editingRange = range
@@ -89,15 +100,16 @@ struct ContentView: View {
                     }
                     .listStyle(PlainListStyle())
                     .frame(maxHeight: .infinity)
+                    .background(Color(.systemGroupedBackground))
                 }
             }
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(8)
+            .background(Color(.systemGroupedBackground).opacity(0.7).blur(radius: 0.5))
+            .cornerRadius(24)
             .padding(.top, 8)
             .padding(.horizontal)
             
             // 2. Add new date range form fixed at the bottom
-            VStack(spacing: 8) {
+            VStack(spacing: 16) {
                 // Total days section moved here, right above the form
                 HStack(spacing: 12) {
                     Label { Text("\(dateRangeManager.totalIncludedDays)").bold() } icon: { Text("Included") }
@@ -111,32 +123,54 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
-                .background(Color(.systemGroupedBackground))
-                .cornerRadius(8)
+                .background(.ultraThinMaterial)
+                .cornerRadius(16)
                 .padding(.horizontal)
                 
-                DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
-                DatePicker("End Date", selection: $endDate, displayedComponents: .date)
-                Toggle("Include Dates", isOn: $isInclusive)
-                TextField("Description", text: $description)
-                if endDate <= startDate {
-                    Text("End date must be after start date.")
-                        .foregroundColor(.red)
-                        .font(.caption)
+                VStack(spacing: 12) {
+                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .padding(10)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
+                    DatePicker("End Date", selection: $endDate, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .padding(10)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
+                    Toggle("Include Dates", isOn: $isInclusive)
+                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        .padding(.horizontal, 10)
+                    TextField("Description", text: $description)
+                        .padding(10)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
+                    if endDate <= startDate {
+                        Text("End date must be after start date.")
+                            .foregroundColor(.red)
+                            .font(.caption)
+                    }
+                    Button(action: addDateRange) {
+                        Text("Add")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .shadow(color: Color.blue.opacity(0.2), radius: 4, x: 0, y: 2)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(endDate <= startDate)
                 }
-                Button(action: addDateRange) {
-                    Text("Add")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(endDate <= startDate)
+                .padding(.horizontal)
             }
-            .padding()
-            .background(Color(.systemBackground).opacity(0.95))
-            .cornerRadius(8)
-            .shadow(radius: 4)
-            .padding(.horizontal)
+            .padding(.top, 8)
             .padding(.bottom, 8)
+            .background(.ultraThinMaterial)
+            .cornerRadius(24)
+            .shadow(radius: 8)
+            .padding(.horizontal)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .sheet(item: $editingRange) { range in
