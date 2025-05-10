@@ -27,7 +27,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 1. Scrollable, fixed-height list at the top
+            // 1. List view at the top
             ZStack {
                 if dateRangeManager.dateRanges.isEmpty {
                     VStack {
@@ -38,61 +38,59 @@ struct ContentView: View {
                         Spacer()
                     }
                 } else {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            ForEach(dateRangeManager.dateRanges) { range in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
-                                        Text(range.description)
-                                            .font(.subheadline)
-                                            .foregroundColor(.blue)
-                                        Text("Number of Days: \(range.numberOfDays)")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    Spacer()
-                                    Text(range.isInclusive ? "Inclusive" : "Exclusive")
+                    List {
+                        ForEach(dateRangeManager.dateRanges) { range in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
+                                    Text(range.description)
+                                        .font(.subheadline)
+                                        .foregroundColor(.blue)
+                                    Text("Number of Days: \(range.numberOfDays)")
                                         .font(.caption)
-                                        .padding(4)
-                                        .background(range.isInclusive ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                                        .cornerRadius(4)
+                                        .foregroundColor(.secondary)
                                 }
-                                .opacity(range.ignore ? 0.4 : 1.0)
-                                .padding(.horizontal)
-                                .padding(.vertical, 6)
-                                .background(Color(.systemBackground))
-                                .swipeActions(edge: .trailing) {
-                                    Button {
-                                        editingRange = range
-                                        editStartDate = range.startDate
-                                        editEndDate = range.endDate
-                                        editIsInclusive = range.isInclusive
-                                        editDescription = range.description
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-                                    .tint(.blue)
-                                    Button(role: .destructive) {
-                                        if let index = dateRangeManager.dateRanges.firstIndex(where: { $0.id == range.id }) {
-                                            deleteDateRange(at: IndexSet(integer: index))
-                                        }
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                    Button {
-                                        dateRangeManager.toggleIgnore(id: range.id)
-                                    } label: {
-                                        Label(range.ignore ? "Unignore" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
-                                    }
-                                    .tint(.gray)
+                                Spacer()
+                                Text(range.isInclusive ? "Inclusive" : "Exclusive")
+                                    .font(.caption)
+                                    .padding(4)
+                                    .background(range.isInclusive ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                                    .cornerRadius(4)
+                            }
+                            .opacity(range.ignore ? 0.4 : 1.0)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    editingRange = range
+                                    editStartDate = range.startDate
+                                    editEndDate = range.endDate
+                                    editIsInclusive = range.isInclusive
+                                    editDescription = range.description
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
                                 }
+                                .tint(.blue)
+                                
+                                Button(role: .destructive) {
+                                    if let index = dateRangeManager.dateRanges.firstIndex(where: { $0.id == range.id }) {
+                                        deleteDateRange(at: IndexSet(integer: index))
+                                    }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                                
+                                Button {
+                                    dateRangeManager.toggleIgnore(id: range.id)
+                                } label: {
+                                    Label(range.ignore ? "Unignore" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
+                                }
+                                .tint(.gray)
                             }
                         }
                     }
+                    .listStyle(PlainListStyle())
+                    .frame(height: 240)
                 }
             }
-            .frame(height: 240)
             .background(Color(.secondarySystemBackground))
             .cornerRadius(8)
             .padding(.top, 8)
