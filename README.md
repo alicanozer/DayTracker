@@ -63,7 +63,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ## 👤 Author
 
 Your Name
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@alicanozer](https://github.com/alicanozer)
 
 ## 🙏 Acknowledgments
 
