@@ -68,20 +68,20 @@ struct ContentView: View {
                 .listStyle(PlainListStyle())
                 .frame(maxHeight: .infinity)
                 .background(Self.appBackground)
+                .padding(.horizontal, -8)
             }
         }
         .background(Self.appBackground)
-        .cornerRadius(18)
+        .cornerRadius(0)
         .padding(.top, 8)
-        .padding(.horizontal, 4)
     }
     
     private func dateRangeRow(_ range: DateRange) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(Self.cardColor)
                 .shadow(color: Self.accentBlue.opacity(0.07), radius: 4, x: 0, y: 2)
-            HStack(spacing: 10) {
+            HStack(spacing: 2) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
                         .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
@@ -90,17 +90,21 @@ struct ContentView: View {
                         .font(.custom(Self.monoFontName, size: 15))
                         .foregroundColor(Self.accentBlue)
                 }
-                Spacer(minLength: 8)
+                Spacer(minLength: 2)
                 Text((range.isInclusive ? "Inclusive" : "Exclusive") + ":\(range.numberOfDays) days")
                     .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
-                    .padding(.horizontal, 10)
-                    .background(range.isInclusive ? Self.accentGreen.opacity(0.15) : Self.accentRed.opacity(0.15))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(range.isInclusive ? Self.accentGreen.opacity(0.18) : Self.accentRed.opacity(0.18))
                     .foregroundColor(range.isInclusive ? Self.accentGreen : Self.accentRed)
-                    .cornerRadius(8)
+                    .cornerRadius(12)
+                    .frame(minWidth: 120)
             }
-            .padding(14)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
             .opacity(range.ignore ? 0.4 : 1.0)
         }
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowBackground(Color.clear)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button {
