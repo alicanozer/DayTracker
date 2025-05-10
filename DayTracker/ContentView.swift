@@ -88,15 +88,13 @@ struct ContentView: View {
                         }
                     }
                     .listStyle(PlainListStyle())
-                    .frame(height: 240)
+                    .frame(maxHeight: .infinity)
                 }
             }
             .background(Color(.secondarySystemBackground))
             .cornerRadius(8)
             .padding(.top, 8)
             .padding(.horizontal)
-            
-            Spacer()
             
             // 2. Add new date range form fixed at the bottom
             VStack(spacing: 8) {
