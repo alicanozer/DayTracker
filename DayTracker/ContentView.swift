@@ -68,11 +68,11 @@ struct ContentView: View {
                 .listStyle(PlainListStyle())
                 .frame(maxHeight: .infinity)
                 .background(Self.appBackground)
-                .padding(.horizontal, -8)
+                .padding(.horizontal, 2)
             }
         }
         .background(Self.appBackground)
-        .cornerRadius(0)
+        .cornerRadius(2)
         .padding(.top, 8)
     }
     
@@ -85,14 +85,17 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(dateFormatter.string(from: range.startDate)) - \(dateFormatter.string(from: range.endDate))")
                         .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
+                        .kerning(-0.8)
                         .foregroundColor(Self.textPrimary)
                     Text(range.description)
                         .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
                         .foregroundColor(Self.accentBlue)
                 }
                 Spacer(minLength: 2)
                 Text((range.isInclusive ? "Inclusive" : "Exclusive") + ":\(range.numberOfDays) days")
                     .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
+                    .kerning(-0.8)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(range.isInclusive ? Self.accentGreen.opacity(0.18) : Self.accentRed.opacity(0.18))
@@ -139,13 +142,13 @@ struct ContentView: View {
     private var summaryAndAddButtonSection: some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Included").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalIncludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) } icon: { Text("Included").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) }
                     .labelStyle(VerticalLabelStyle())
                 Divider().frame(height: 24)
-                Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Excluded").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalExcludedDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) } icon: { Text("Excluded").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) }
                     .labelStyle(VerticalLabelStyle())
                 Divider().frame(height: 24)
-                Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)) } icon: { Text("Final").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)) }
+                Label { Text("\(dateRangeManager.totalDays)").bold().foregroundColor(Self.textPrimary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) } icon: { Text("Final").foregroundColor(Self.textSecondary).font(.custom(Self.monoFontName, size: 15)).kerning(-0.8) }
                     .labelStyle(VerticalLabelStyle())
             }
             .frame(maxWidth: .infinity)
@@ -161,6 +164,7 @@ struct ContentView: View {
                         .fontWeight(.medium)
                 }
                 .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
+                .kerning(-0.8)
                 .frame(maxWidth: .infinity)
                 .padding(10)
                 .background(Self.accentBlue)
@@ -183,6 +187,7 @@ struct ContentView: View {
         VStack(spacing: 16) {
             Text("Add New Dates")
                 .font(.custom(Self.monoFontName, size: 22).weight(.bold))
+                .kerning(-0.8)
                 .foregroundColor(Self.textPrimary)
                 .padding(.top, 8)
             VStack(spacing: 8) {
@@ -193,6 +198,7 @@ struct ContentView: View {
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
                     .font(.custom(Self.monoFontName, size: 15))
+                    .kerning(-0.8)
                 DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                     .datePickerStyle(.compact)
                     .padding(8)
@@ -200,21 +206,25 @@ struct ContentView: View {
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
                     .font(.custom(Self.monoFontName, size: 15))
+                    .kerning(-0.8)
                 Toggle("Include Dates", isOn: $isInclusive)
                     .toggleStyle(SwitchToggleStyle(tint: Self.accentGreen))
                     .padding(.horizontal, 8)
                     .foregroundColor(Self.textPrimary)
                     .font(.custom(Self.monoFontName, size: 15))
+                    .kerning(-0.8)
                 TextField("Description", text: $description)
                     .padding(8)
                     .background(Self.cardColor)
                     .cornerRadius(8)
                     .foregroundColor(Self.textPrimary)
                     .font(.custom(Self.monoFontName, size: 15))
+                    .kerning(-0.8)
                 if endDate <= startDate {
                     Text("End date must be after start date.")
                         .foregroundColor(Self.accentRed)
                         .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
                 }
                 Button(action: {
                     addDateRange()
@@ -222,6 +232,7 @@ struct ContentView: View {
                 }) {
                     Text("Add")
                         .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
+                        .kerning(-0.8)
                         .frame(maxWidth: .infinity)
                         .padding(10)
                         .background(Self.accentGreen)
