@@ -97,23 +97,28 @@ struct ContentView: View {
             .cornerRadius(8)
             .padding(.top, 8)
             .padding(.horizontal)
-            // 2. Total days section as a horizontal row just above the add form
-            HStack(spacing: 12) {
-                Label { Text("\(dateRangeManager.totalIncludedDays)").bold() } icon: { Text("Included") }
-                    .labelStyle(VerticalLabelStyle())
-                Divider().frame(height: 32)
-                Label { Text("\(dateRangeManager.totalExcludedDays)").bold() } icon: { Text("Excluded") }
-                    .labelStyle(VerticalLabelStyle())
-                Divider().frame(height: 32)
-                Label { Text("\(dateRangeManager.totalDays)").bold() } icon: { Text("Final") }
-                    .labelStyle(VerticalLabelStyle())
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .background(Color(.systemGroupedBackground))
-            // 3. Add new date range form fixed at the bottom
+            
             Spacer()
+            
+            // 2. Add new date range form fixed at the bottom
             VStack(spacing: 8) {
+                // Total days section moved here, right above the form
+                HStack(spacing: 12) {
+                    Label { Text("\(dateRangeManager.totalIncludedDays)").bold() } icon: { Text("Included") }
+                        .labelStyle(VerticalLabelStyle())
+                    Divider().frame(height: 32)
+                    Label { Text("\(dateRangeManager.totalExcludedDays)").bold() } icon: { Text("Excluded") }
+                        .labelStyle(VerticalLabelStyle())
+                    Divider().frame(height: 32)
+                    Label { Text("\(dateRangeManager.totalDays)").bold() } icon: { Text("Final") }
+                        .labelStyle(VerticalLabelStyle())
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color(.systemGroupedBackground))
+                .cornerRadius(8)
+                .padding(.horizontal)
+                
                 DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                 DatePicker("End Date", selection: $endDate, displayedComponents: .date)
                 Toggle("Include Dates", isOn: $isInclusive)
