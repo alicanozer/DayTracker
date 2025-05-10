@@ -93,7 +93,7 @@ struct ContentView: View {
                         .foregroundColor(Self.accentBlue)
                 }
                 Spacer(minLength: 2)
-                Text((range.isInclusive ? "Inclusive" : "Exclusive") + ":\(range.numberOfDays) days")
+                Text("\(range.numberOfDays) days")
                     .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
                     .kerning(-0.8)
                     .padding(.horizontal, 8)
@@ -133,7 +133,7 @@ struct ContentView: View {
             Button {
                 dateRangeManager.toggleIgnore(id: range.id)
             } label: {
-                Label(range.ignore ? "Unignore" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
+                Label(range.ignore ? "Include" : "Ignore", systemImage: range.ignore ? "eye" : "eye.slash")
             }
             .tint(.gray)
         }
