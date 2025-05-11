@@ -46,6 +46,80 @@ struct ContentView: View {
         .sheet(isPresented: $showAddSheet) {
             addDateSheet
         }
+        .sheet(item: $editingRange) { range in
+            VStack(spacing: 16) {
+                Text("Edit Date Range")
+                    .font(.custom(Self.monoFontName, size: 22).weight(.bold))
+                    .kerning(-0.8)
+                    .foregroundColor(Self.textPrimary)
+                    .padding(.top, 8)
+                VStack(spacing: 8) {
+                    DatePicker("Start Date", selection: $editStartDate, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .padding(8)
+                        .background(Self.cardColor)
+                        .cornerRadius(8)
+                        .foregroundColor(Self.textPrimary)
+                        .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
+                    DatePicker("End Date", selection: $editEndDate, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .padding(8)
+                        .background(Self.cardColor)
+                        .cornerRadius(8)
+                        .foregroundColor(Self.textPrimary)
+                        .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
+                    Toggle("Include Dates", isOn: $editIsInclusive)
+                        .toggleStyle(SwitchToggleStyle(tint: Self.accentGreen))
+                        .padding(.horizontal, 8)
+                        .foregroundColor(Self.textPrimary)
+                        .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
+                    TextField("Description", text: $editDescription)
+                        .padding(8)
+                        .background(Self.cardColor)
+                        .cornerRadius(8)
+                        .foregroundColor(Self.textPrimary)
+                        .font(.custom(Self.monoFontName, size: 15))
+                        .kerning(-0.8)
+                    if editEndDate <= editStartDate {
+                        Text("End date must be after start date.")
+                            .foregroundColor(Self.accentRed)
+                            .font(.custom(Self.monoFontName, size: 15))
+                            .kerning(-0.8)
+                    }
+                    Button(action: {
+                        if let id = range.id as UUID? {
+                            dateRangeManager.updateDateRange(
+                                id: id,
+                                startDate: editStartDate,
+                                endDate: editEndDate,
+                                isInclusive: editIsInclusive,
+                                description: editDescription
+                            )
+                        }
+                        editingRange = nil
+                    }) {
+                        Text("Save")
+                            .font(.custom(Self.monoFontName, size: 15).weight(.semibold))
+                            .kerning(-0.8)
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                            .background(Self.accentBlue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .shadow(color: Self.accentBlue.opacity(0.10), radius: 2, x: 0, y: 1)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(editEndDate <= editStartDate)
+                }
+                .padding(.horizontal, 2)
+                Spacer()
+            }
+            .padding()
+            .background(Self.appBackground.ignoresSafeArea())
+        }
         .navigationTitle("Date Tracker")
     }
     
